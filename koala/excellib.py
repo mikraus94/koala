@@ -13,7 +13,7 @@ import numpy as np
 import scipy.optimize
 import datetime
 import random
-from math import log, ceil
+from math import log, ceil, floor
 from decimal import Decimal, ROUND_UP, ROUND_HALF_UP
 from calendar import monthrange
 from dateutil.relativedelta import relativedelta
@@ -38,12 +38,13 @@ from functools import reduce
 # Note: some functions (if, pi, atan2, and, or, array, ...) are already taken care of
 # in the FunctionNode code, so adding them here will have no effect.
 FUNCTION_MAP = {
-    "gammaln": "lgamma",
     "ln": "xlog",
-    "max": "xmax",
     "min": "xmin",
-    "round": "xround",
+    "max": "xmax",
     "sum": "xsum",
+    "gammaln": "lgamma",
+    "round": "xround",
+    "floor": "xfloor",
 }
 
 # Define the function below, then add the definition below (both alphabetically)
@@ -110,6 +111,11 @@ IND_FUN = [
     "XNPV",
     "YEAR",
     "YEARFRAC",
+    "MONTH",
+    "EOMONTH",
+    "RANDBETWEEN",
+    "RAND",
+    "FIND",
 ]
 
 CELL_CHARACTER_LIMIT = 32767
@@ -634,7 +640,8 @@ def npv(rate, *values): # Excel reference: https://support.office.com/en-us/arti
     return sum([float(x)*(1+rate)**-(i+1) for (i,x) in enumerate(cashflow)])
 
 
-def offset(reference, rows, cols, height=None, width=None): # Excel reference: https://support.office.com/en-us/article/OFFSET-function-c8de19ae-dd79-4b9b-a14e-b4d906d11b66
+# Excel reference: https://support.office.com/en-us/article/OFFSET-function-c8de19ae-dd79-4b9b-a14e-b4d906d11b66
+def offset(reference, rows, cols, height=None, width=None):
     # This function accepts a list of addresses
     # Maybe think of passing a Range as first argument
 
@@ -1289,6 +1296,37 @@ def yearfrac(start_date, end_date, basis=0):
 
     return result
 
+
+# https://support.office.com/en-us/article/find-findb-functions-c7912941-af2a-4bdf-a553-d0d89b0a0628
+def find(needle, haystack, start=1):
+    try:
+        position = haystack.lower().find(needle.lower()) + 1
+        if position:
+            return position
+    except:
+        pass
+
+    return ExcelError('#VALUE!', f'{haystack} does not contain {needle}')
+
+
+# https://support.office.com/en-us/article/ceiling-function-0a5cd7c8-0720-4f0a-bd2c-c943e510899f
+def ceiling(number, significance):
+    if not is_number(number):
+        return ExcelError('#VALUE!', '%s is not a number' % str(number))
+    if not is_number(significance):
+        return ExcelError('#VALUE!', '%s is not a number' % str(significance))
+
+    return ceil(number / significance) * significance
+
+
+# https://support.office.com/en-us/article/floor-function-14bb497c-24f2-4e04-b327-b0b4de5a8886
+def xfloor(number, significance):
+    if not is_number(number):
+        return ExcelError('#VALUE!', '%s is not a number' % str(number))
+    if not is_number(significance):
+        return ExcelError('#VALUE!', '%s is not a number' % str(significance))
+
+    return floor(number / significance) * significance
 
 
 if __name__ == '__main__':
