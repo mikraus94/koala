@@ -357,7 +357,7 @@ class FunctionNode(ASTNode):
             else:
                 return 'self.eval_ref(index(%s), ref = %s)' % (",".join([n.emit(ast,context=context) for n in args]), self.ref)
         elif fun == "offset":
-            if pointer or self.parent(ast) is None or self.parent(ast).tvalue == ':':
+            if pointer or (self.parent(ast) is not None and self.parent(ast).tvalue == ':'):
                 return 'offset(' + ",".join([n.emit(ast,context=context) for n in args]) + ")"
             else:
                 return 'self.eval_ref(offset(%s), ref = %s)' % (",".join([n.emit(ast,context=context) for n in args]), self.ref)
