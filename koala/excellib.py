@@ -114,6 +114,8 @@ IND_FUN = [
     "RANDBETWEEN",
     "RAND",
     "FIND",
+    "LOGIC_AND",
+    "LOGIC_OR",
 ]
 
 CELL_CHARACTER_LIMIT = 32767
@@ -122,6 +124,28 @@ EXCEL_EPOCH = datetime.datetime.strptime("1900-01-01", '%Y-%m-%d').date()
 ######################################################################################
 # List of excel equivalent functions
 # TODO: needs unit testing
+
+
+def logic_and(*args):  # Excel reference: https://support.office.com/en-us/article/and-function-5f19b2e8-e1df-4408-897a-ce285a19e9d9
+    res = True
+    for arg in args:
+        if isinstance(arg, Range):
+            res = res and all(arg.values)
+        else:
+            res = res and arg
+
+    return res
+
+
+def logic_or(*args):  # Excel reference: https://support.office.com/en-us/article/or-function-7d17ad14-8700-4281-b308-00b131e22af0
+    res = False
+    for arg in args:
+        if isinstance(arg, Range):
+            res = res or any(arg.values)
+        else:
+            res = res or arg
+
+    return res
 
 
 def value(text):
