@@ -116,6 +116,8 @@ IND_FUN = [
     "RANDBETWEEN",
     "RAND",
     "FIND",
+    "LOGIC_AND",
+    "LOGIC_OR",
 ]
 
 CELL_CHARACTER_LIMIT = 32767
@@ -131,6 +133,39 @@ def average(*args): # Excel reference: https://support.office.com/en-us/article/
     values = extract_numeric_values(*args)
 
     return sum(values) / len(values)
+
+
+def logic_and(*args):  # Excel reference: https://support.office.com/en-us/article/and-function-5f19b2e8-e1df-4408-897a-ce285a19e9d9
+    res = True
+    for arg in args:
+        if isinstance(arg, Range):
+            res = res and all(arg.values)
+        else:
+            res = res and arg
+
+    return res
+
+
+def logic_or(*args):  # Excel reference: https://support.office.com/en-us/article/or-function-7d17ad14-8700-4281-b308-00b131e22af0
+    res = False
+    for arg in args:
+        if isinstance(arg, Range):
+            res = res or any(arg.values)
+        else:
+            res = res or arg
+
+    return res
+
+
+def value(text):
+    # make the distinction for naca numbers
+    if text.find('.') > 0:
+        return float(text)
+    elif text.endswith('%'):
+        text = text.replace('%', '')
+        return float(text) / 100
+    else:
+        return int(text)
 
 
 def choose(index_num, *values): # Excel reference: https://support.office.com/en-us/article/CHOOSE-function-fc5c184f-cb62-4ec7-a46e-38653b98f5bc
@@ -888,17 +923,6 @@ def today():
     January 1, 1900 is serial number 1, and January 1, 2008 is serial number 39448 because it is 39,447 days after January 1, 1900.
      You will need to change the number format (Format Cells) in order to display a proper date."""
     return days_since_epoch.days + 2
-
-
-def value(text):
-    # make the distinction for naca numbers
-    if text.find('.') > 0:
-        return float(text)
-    elif text.endswith('%'):
-        text = text.replace('%', '')
-        return float(text) / 100
-    else:
-        return int(text)
 
 
 def vdb(cost, salvage, life, start_period, end_period, factor = 2, no_switch = False): # Excel reference: https://support.office.com/en-us/article/VDB-function-dde4e207-f3fa-488d-91d2-66d55e861d73

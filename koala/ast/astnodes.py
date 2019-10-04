@@ -350,9 +350,9 @@ class FunctionNode(ASTNode):
             return ",".join([n.emit(ast,context=context) for n in args])
 
         elif fun == "and":
-            return "all([" + ",".join([n.emit(ast,context=context) for n in args]) + "])"
+            return "logic_and(" + ",".join([n.emit(ast,context=context) for n in args]) + ")"
         elif fun == "or":
-            return "any([" + ",".join([n.emit(ast,context=context) for n in args]) + "])"
+            return "logic_or(" + ",".join([n.emit(ast,context=context) for n in args]) + ")"
         elif fun == "index":
             if pointer or self.parent(ast) is not None and self.parent(ast).tvalue == ':':
                 return 'index(' + ",".join([n.emit(ast,context=context) for n in args]) + ")"
