@@ -181,7 +181,7 @@ class Spreadsheet(object):
             sp = Spreadsheet()
             sp.build_spreadsheet(G, cellmap, self.named_ranges, pointers = self.pointers, outputs = outputs, inputs = inputs, debug = self.debug)
             return sp
-    
+
     def build_spreadsheet(self, G, cellmap, named_ranges, pointers = set(), outputs = set(), inputs = set(), debug = False):
         """
         Writes the elements created by gen_graph to the object
@@ -879,6 +879,9 @@ class Spreadsheet(object):
             end = eval(vol_range.reference['end'])
 
             vol_range.build('%s:%s' % (start, end), debug = True)
+
+    def named_to_absolute(self, named_range):
+        return self.named_ranges[named_range]
 
     def eval_ref(self, addr1, addr2 = None, ref = None):
         debug = False

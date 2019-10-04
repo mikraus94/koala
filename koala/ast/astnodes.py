@@ -242,7 +242,7 @@ class RangeNode(OperandNode):
         # for OFFSET, it will also depends on the position in the formula (1st position required)
         if (parent is not None and
             (parent.tvalue == ':' or
-            (parent.tvalue == 'OFFSET' and parent.children(ast)[0] == self) or
+            (parent.tvalue == 'OFFSET' and parent.children(ast)[0] == self and self.tsubtype != "named_range") or
             (parent.tvalue == 'CHOOSE' and parent.children(ast)[0] != self and self.tsubtype == "named_range")) or
             pointer):
 
@@ -255,6 +255,8 @@ class RangeNode(OperandNode):
             output = my_str
 
         # OFFSET HANDLER
+        elif (parent is not None and parent.tvalue == 'OFFSET' and parent.children(ast)[0] == self):
+            output = 'self.named_to_absolute(%s)' % (my_str, )
         elif (parent is not None and parent.tvalue == 'OFFSET' and
              parent.children(ast)[1] == self and self.tsubtype == "named_range"):
             output = 'self.eval_ref(%s, ref = %s)' % (my_str, to_str(self.ref))
