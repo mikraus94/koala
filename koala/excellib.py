@@ -180,18 +180,6 @@ def choose(index_num, *values): # Excel reference: https://support.office.com/en
         return values[index - 1]
 
 
-def columns(array):
-    """
-    Function to find the number of columns in an array.
-    Excel reference: https://support.office.com/en-us/article/columns-function-4e8e7b4e-e603-43e8-b177-956088fa48ca
-
-    :param array: the array of which the columns should be counted.
-    :return: the number of columns.
-    """
-
-    return rows(array)
-
-
 # https://support.office.com/en-us/article/concat-function-9b1a9a3f-94ff-41af-9736-694cbd6b4ca2
 def concat(*args):
     return concatenate(*tuple(flatten(args)))
@@ -550,6 +538,25 @@ def lookup(value, lookup_range, result_range = None):  # Excel reference: https:
                 return output_range[i-1]
 
 
+def columns(array):
+    """
+    Function to find the number of columns in an array.
+    Excel reference: https://support.office.com/en-us/article/columns-function-4e8e7b4e-e603-43e8-b177-956088fa48ca
+
+    :param array: the array of which the columns should be counted.
+    :return: the number of columns.
+    """
+
+    if isinstance(array, (float, int)):
+        cols = 1  # special case for A1:A1 type ranges which for some reason only return an int/float
+    elif array is None:
+        cols = 1  # some A1:A1 ranges return None (issue with ref cell)
+    else:
+        cols = array.ncols
+
+    return cols
+
+
 def match(lookup_value, lookup_range, match_type=1):  # Excel reference: https://support.office.com/en-us/article/MATCH-function-e8dffd45-c762-47d6-bf89-533f4a37673a
 
     if not isinstance(lookup_range, Range):
@@ -730,16 +737,6 @@ def offset(reference, rows, cols, height=None, width=None):
         return ExcelError('Height and width must be passed together')
 
     return ref_sheet + start_address + end_address
-
-
-def pmt(*args): # Excel reference: https://support.office.com/en-us/article/PMT-function-0214da64-9a63-4996-bc20-214433fa6441
-    rate = args[0]
-    num_payments = args[1]
-    present_value = args[2]
-    # WARNING fv & type not used yet - both are assumed to be their defaults (0)
-    # fv = args[3]
-    # type = args[4]
-    return -present_value * rate / (1 - np.power(1 + rate, -num_payments))
 
 
 # https://support.office.com/en-us/article/POWER-function-D3F2908B-56F4-4C3F-895A-07FB519C362A
@@ -1160,6 +1157,17 @@ def xnpv(rate, values, dates, lim_rate_low=True, lim_rate_high=False):  # Excel 
             xnpv += v / np.power(1.0 + rate, (d - dates[0]) / 365)
 
     return xnpv
+
+
+def pmt(*args): # Excel reference: https://support.office.com/en-us/article/PMT-function-0214da64-9a63-4996-bc20-214433fa6441
+    rate = args[0]
+    num_payments = args[1]
+    present_value = args[2]
+    # WARNING fv & type not used yet - both are assumed to be their defaults (0)
+    # fv = args[3]
+    # type = args[4]
+
+    return np.pmt(rate, num_payments, present_value)
 
 
 def xround(number, num_digits = 0): # Excel reference: https://support.office.com/en-us/article/ROUND-function-c018c5d8-40fb-4053-90b1-b3e7f61a213c
