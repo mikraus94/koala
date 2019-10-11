@@ -716,6 +716,7 @@ class Spreadsheet(object):
             # case where the address refers to a single value
             else:
                 if address in self.named_ranges:  # if the cell is a named range, we need to update and fix the reference cell
+                    self.cell_set_value(self.named_ranges[address], value)
                     ref_address = self.named_ranges[address]
 
                     if ref_address in self.cellmap:
@@ -757,8 +758,8 @@ class Spreadsheet(object):
             )
             self.cell_reset(depricated.address())
 
-        for cell in self.cellmap.values:
-            self.cell_reset(cell.address())
+        for cell in self.cellmap:
+            self.cell_reset(cell)
         return
 
     def cell_reset(self, address):
@@ -883,7 +884,7 @@ class Spreadsheet(object):
     def named_to_absolute(self, named_range):
         return self.named_ranges[named_range]
 
-    def eval_ref(self, addr1, addr2 = None, ref = None):
+    def eval_ref(self, addr1, addr2 = None, ref = None, default = None):
         debug = False
 
         if isinstance(addr1, ExcelError):
@@ -893,6 +894,8 @@ class Spreadsheet(object):
         else:
             if addr1 in self.cellmap:
                 cell1 = self.cellmap[addr1]
+            elif default is not None:
+                return default
             else:
                 if self.debug:
                     print('WARNING in eval_ref: address %s not found in cellmap, returning #NULL' % addr1)
