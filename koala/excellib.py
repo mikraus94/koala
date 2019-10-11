@@ -454,7 +454,7 @@ def rows(array):
     elif array is None:
         rows = 1  # some A1:A1 ranges return None (issue with ref cell)
     else:
-        rows = len(array.values)
+        rows = array.nrows
 
     return rows
 
@@ -468,7 +468,14 @@ def columns(array):
     :return: the number of columns.
     """
 
-    return rows(array)
+    if isinstance(array, (float, int)):
+        cols = 1  # special case for A1:A1 type ranges which for some reason only return an int/float
+    elif array is None:
+        cols = 1  # some A1:A1 ranges return None (issue with ref cell)
+    else:
+        cols = array.ncols
+
+    return cols
 
 
 def match(lookup_value, lookup_range, match_type=1): # Excel reference: https://support.office.com/en-us/article/MATCH-function-e8dffd45-c762-47d6-bf89-533f4a37673a
@@ -1079,11 +1086,15 @@ def vlookup(lookup_value, table_array, col_index_num, range_lookup = True): # ht
     else:
         i = None
         for v in first_column.values:
-            if lookup_value >= v:
-                i = first_column.values.index(v)
-                ref = first_column.order[i]
-            else:
-                break
+            # continue on uncomparable types, e.g. empty cell i.e. '' and numeric lookup_value
+            try:
+                if lookup_value >= v:
+                    i = first_column.values.index(v)
+                    ref = first_column.order[i]
+                else:
+                    break
+            except:
+                pass
 
         if i is None:
             return ExcelError('#N/A', 'lookup_value smaller than all values of table_array')
@@ -1242,7 +1253,8 @@ def pmt(*args): # Excel reference: https://support.office.com/en-us/article/PMT-
     # WARNING fv & type not used yet - both are assumed to be their defaults (0)
     # fv = args[3]
     # type = args[4]
-    return -present_value * rate / (1 - np.power(1 + rate, -num_payments))
+
+    return np.pmt(rate, num_payments, present_value)
 
 
 # https://support.office.com/en-us/article/POWER-function-D3F2908B-56F4-4C3F-895A-07FB519C362A
