@@ -318,14 +318,15 @@ class FunctionNode(ASTNode):
             range = None
             childs = args[0].children(ast)
 
-            for child in childs:
-                if ':' in str(child.tvalue) and child.tvalue != ':':
-                    is_range = True
-                    range = child.tvalue
-                    break
+            # TODO remove or fix just for direct range usage, not `OR(A1:A3)`, since it fails
+            # for child in childs:
+            #     if ':' in str(child.tvalue) and child.tvalue != ':':
+            #         is_range = True
+            #         range = child.tvalue
+            #         break
 
-            if is_range: # hack to filter Ranges when necessary,for instance situations like {=IF(A1:A3 > 0; A1:A3; 0)}
-                return 'RangeCore.filter(self.eval_ref("%s"), %s)' % (range, args[0].emit(ast,context=context))
+            # if is_range: # hack to filter Ranges when necessary,for instance situations like {=IF(A1:A3 > 0; A1:A3; 0)}
+            #     return 'RangeCore.filter(self.eval_ref("%s"), %s)' % (range, args[0].emit(ast,context=context))
             if len(args) == 2:
                 return "%s if %s else 0" %(args[1].emit(ast,context=context),args[0].emit(ast,context=context))
             elif len(args) == 3:
