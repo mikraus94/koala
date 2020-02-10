@@ -116,6 +116,7 @@ IND_FUN = [
     "FIND",
     "LOGIC_AND",
     "LOGIC_OR",
+    "PV"
 ]
 
 CELL_CHARACTER_LIMIT = 32767
@@ -1361,6 +1362,10 @@ def xfloor(number, significance):
         return ExcelError('#VALUE!', '%s is not a number' % str(significance))
 
     return floor(number / significance) * significance
+
+
+def pv(*args):
+    return np.pv(*args)
 
 
 if __name__ == '__main__':
