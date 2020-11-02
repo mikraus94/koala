@@ -849,6 +849,14 @@ def yearfrac(start_date, end_date, basis=0):
 
         return delta / denom
 
+    # sometimes the date is passed as a string, we have to try to get the right representation of the Excel date
+    if type(start_date) == str:
+        try:
+            day, month, year = map(int, start_date.split('.'))
+            start_date = (datetime.date(year, month, day) - datetime.date(1899, 12, 31)).days
+        except:
+            pass
+
     if not is_number(start_date):
         return ExcelError('#VALUE!', 'start_date %s must be a number' % str(start_date))
     if not is_number(end_date):
@@ -1310,12 +1318,38 @@ def concatenate(*args):
     if tuple(flatten(args)) != args:
         return ExcelError('#VALUE', 'Could not process arguments %s' % (args))
 
-    cat_string = ''.join(str(a) for a in args)
+    # int values are represented as float, so we have change their representation to get the right concatenation
+    inted_args = []
+    for arg in args:
+        try:
+            if int(arg) == arg:
+                inted_args.append(int(arg))
+            else:
+                inted_args.append(arg)
+        except ValueError:
+            inted_args.append(a)
+
+    cat_string = ''.join(str(a) for a in inted_args)
 
     if len(cat_string) > CELL_CHARACTER_LIMIT:
         return ExcelError('#VALUE', 'Too long. concatentaed string should be no longer than %s but is %s' % (CELL_CHARACTER_LIMIT, len(cat_String)))
 
+    # if all the arguments were int number, the result should be int too
+    try:
+        cat_string = int(cat_string)
+    except:
+        pass
+
     return cat_string
+
+
+# the TEXT function of Excel was not implemented at all
+def text(arg, _):  # TODO the second argument could make some formatting
+    # parameters of TEXT Excel function are only numbers, so we can use the int() function without try/except block
+    if arg == int(arg):
+        arg = int(arg)
+    return str(arg)
+
 
 
 # https://support.office.com/en-us/article/randbetween-function-4cc7f0d1-87dc-4eb7-987f-a469ab381685
