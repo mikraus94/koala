@@ -6,6 +6,8 @@ from koala.utils import *
 
 from openpyxl.compat import unicode
 
+import datetime
+
 
 # WARNING: Range should never be imported directly. Import Range from excelutils instead.
 
@@ -607,6 +609,22 @@ class RangeCore(dict):
 
     @staticmethod
     def is_strictly_superior(a, b):
+
+        # sometimes date is represented as a string, so we try to represent it the right way
+        if type(a) == str:
+            try:
+                day, month, year = map(int, a.split('.'))
+                a = (datetime.date(year, month, day) - datetime.date(1899, 12, 31)).days
+            except:
+                pass
+
+        if type(b) == str:
+            try:
+                day, month, year = map(int, b.split('.'))
+                b = (datetime.date(year, month, day) - datetime.date(1899, 12, 31)).days
+            except:
+                pass
+
         try:
             return check_value(a) > check_value(b)
         except Exception as e:
