@@ -1347,8 +1347,8 @@ def concatenate(*args):
 def text(arg, _):  # TODO the second argument could make some formatting
     # parameters of TEXT Excel function are only numbers, so we can use the int() function without try/except block
     if arg == int(arg):
-        arg = int(arg)
-    return str(arg)
+        arg = '{:,}'.format(int(arg)).replace(',', ' ')
+    return arg
 
 
 
