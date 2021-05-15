@@ -660,13 +660,13 @@ class Spreadsheet(object):
     def dump_json(self, fname):
         dump_json(self, fname)
 
-    def dump(self, fname):
-        dump(self, fname)
+    def dump(self, fname, outfile=None):
+        dump(self, fname, outfile)
 
     @staticmethod
-    def load(fname):
+    def load(fname, infile=None):
         spreadsheet = Spreadsheet()
-        spreadsheet.build_spreadsheet(*load(fname))
+        spreadsheet.build_spreadsheet(*load(fname, infile))
         return spreadsheet
 
     @staticmethod

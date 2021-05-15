@@ -15,9 +15,10 @@ from koala.Range import RangeCore, RangeFactory
 SEP = ";;"
 
 ########### based on custom format #################
-def dump(self, fname):
+def dump(self, fname, outfile=None):
 
-    outfile = gzip.GzipFile(fname,'w')
+    if outfile is None:
+        outfile = gzip.GzipFile(fname, 'w')
 
     # write simple cells first
     simple_cells = [cell for cell in list(self.cellmap.values()) if cell.is_range == False]
@@ -89,7 +90,7 @@ def dump(self, fname):
 
     outfile.close()
 
-def load(fname):
+def load(fname, infile=None):
 
     def clean_bool(string):
         if string == "0":
@@ -119,8 +120,9 @@ def load(fname):
     outputs = None
     inputs = None
     named_ranges = {}
-    infile = gzip.GzipFile(fname, 'rb')
-        
+    if infile is None:
+        infile = gzip.GzipFile(fname, 'rb')
+
     for line in infile.read().splitlines():
 
         line= line.decode("utf-8")
