@@ -10,6 +10,7 @@ from __future__ import absolute_import, division
 
 import itertools
 import numpy as np
+import numpy_financial as npf
 import scipy.optimize
 import datetime
 import random
@@ -1030,7 +1031,7 @@ def irr(values, guess = None):
         raise ValueError('guess value for excellib.irr() is %s and not 0' % guess)
     else:
         try:
-            return np.irr(values)
+            return npf.irr(values)
         except Exception as e:
             return ExcelError('#NUM!', e)
 
@@ -1263,7 +1264,7 @@ def pmt(*args): # Excel reference: https://support.office.com/en-us/article/PMT-
     # fv = args[3]
     # type = args[4]
 
-    return np.pmt(rate, num_payments, present_value)
+    return npf.pmt(rate, num_payments, present_value)
 
 
 # https://support.office.com/en-us/article/POWER-function-D3F2908B-56F4-4C3F-895A-07FB519C362A
@@ -1327,7 +1328,7 @@ def concatenate(*args):
             else:
                 inted_args.append(arg)
         except ValueError:
-            inted_args.append(a)
+            inted_args.append(arg)
 
     cat_string = ''.join(str(a) for a in inted_args)
 
@@ -1399,7 +1400,7 @@ def xfloor(number, significance):
 
 
 def pv(*args):
-    return np.pv(*args)
+    return npf.pv(*args)
 
 
 if __name__ == '__main__':
