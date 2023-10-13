@@ -6,7 +6,6 @@ import six
 
 import networkx
 from networkx.classes.digraph import DiGraph
-from openpyxl.compat import unicode
 
 from koala.utils import uniqueify, flatten, max_dimension, col2num, resolve_range
 from koala.Cell import Cell
@@ -118,7 +117,7 @@ def shunting_yard(expression, named_ranges, ref = None, tokenize_range = False):
         for index, token in enumerate(tokens):
             new_tokens.append(token)
 
-            if type(token.tvalue) == str or type(token.tvalue) == unicode:
+            if type(token.tvalue) == str:
 
                 if token.tvalue.startswith(':'): # example -> :OFFSET( or simply :A10
                     depth = 0
@@ -377,7 +376,7 @@ def cell2code(cell, named_ranges):
 
     else:
         ast = None
-        if isinstance(cell.value, unicode):
+        if isinstance(cell.value, type(u'')):
             code = u'u"' + cell.value.replace(u'"', u'\\"') + u'"'
         elif isinstance(cell.value, str):
             raise RuntimeError("Got unexpected non-unicode str")

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     setup(
         name="koala2",
 
-        version="0.0.36",
+        version="1.0.0",
 
         author="Ants, open innovation lab",
         author_email="vallettea@gmail.com",
@@ -19,7 +19,7 @@ if __name__ == '__main__':
         packages=find_packages(),
 
         classifiers=[
-            "Programming Language :: Python :: 2.7 :: 3",
+            "Programming Language :: Python :: 3",
             "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
             'Operating System :: Microsoft :: Windows',
             'Operating System :: MacOS :: MacOS X',
@@ -61,14 +61,14 @@ if __name__ == '__main__':
 
 
         install_requires=[
-            'networkx >= 2.1',
-            'openpyxl >= 2.5.3',
-            'numpy >= 1.14.2',
-            'Cython >= 0.28.2',
-            'lxml >= 4.1.1',
-            'six >= 1.11.0',
-            'scipy>=1.0.0',
-            'python-dateutil==2.8.0',
-            'backports.functools_lru_cache==1.5'
+            'networkx == 3.2',
+            'openpyxl == 3.1.2',
+            'numpy == 1.26.1',
+            'numpy-financial == 1.0.0',
+            'Cython == 3.0.4',
+            'lxml == 4.9.3',
+            'six == 1.16.0',
+            'scipy == 1.11.3',
+            'python-dateutil == 2.8.2',
         ]
     )

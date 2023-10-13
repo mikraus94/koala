@@ -3,25 +3,17 @@ from __future__ import print_function
 
 from networkx import NetworkXError
 
-from openpyxl.compat import unicode
-
 from koala.excellib import FUNCTION_MAP, IND_FUN
 from koala.utils import is_range, split_range, split_address, resolve_range
 from koala.ExcelError import *
 
 
 def to_str(my_string):
-    # `unicode` != `str` in Python2. See `from openpyxl.compat import unicode`
-    if type(my_string) == str and str != unicode:
-        return unicode(my_string, 'utf-8')
-    elif type(my_string) == unicode:
+    try:
+        return str(my_string)
+    except:
+        print('Couldnt parse as string', type(my_string))
         return my_string
-    else:
-        try:
-            return str(my_string)
-        except:
-            print('Couldnt parse as string', type(my_string))
-            return my_string
     # elif isinstance(my_string, (int, float, tuple, Ra):
     #     return str(my_string)
     # else:
@@ -45,7 +37,7 @@ class ASTNode(object):
     def children(self, ast):
         try:
             args = ast.predecessors(self)
-            args = sorted(args, key=lambda x: ast.node[x]['pos'])
+            args = sorted(args, key=lambda x: ast.nodes[x]['pos'])
         except NetworkXError:
             args = ''
         return args

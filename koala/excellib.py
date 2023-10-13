@@ -19,8 +19,6 @@ from decimal import Decimal, ROUND_UP, ROUND_HALF_UP
 from calendar import monthrange
 from dateutil.relativedelta import relativedelta
 
-from openpyxl.compat import unicode
-
 from koala.utils import *
 from koala.Range import RangeCore as Range
 from koala.ExcelError import *
@@ -286,7 +284,7 @@ def average(*args): # Excel reference: https://support.office.com/en-us/article/
 
 def right(text,n):
     #TODO: hack to deal with naca section numbers
-    if isinstance(text, unicode) or isinstance(text,str):
+    if isinstance(text,str):
         return text[-n:]
     else:
         # TODO: get rid of the decimal

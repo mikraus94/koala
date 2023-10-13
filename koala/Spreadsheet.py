@@ -17,8 +17,6 @@ import os.path
 import networkx
 from networkx.readwrite import json_graph
 
-from openpyxl.compat import unicode
-
 
 class Spreadsheet(object):
     def __init__(self, file=None, ignore_sheets=[], ignore_hidden=False, debug=False):
@@ -249,7 +247,7 @@ class Spreadsheet(object):
 
         # previously reset was used to only reset one cell. Capture this behaviour.
         warnings.warn(
-            "xxx_cell functions are depricated and replaced by cell_xxx functions. Please use those functions instead. "
+            "xxx_cell functions are deprecated and replaced by cell_xxx functions. Please use those functions instead. "
             "This behaviour will be removed in a future version.",
             PendingDeprecationWarning
         )
@@ -306,7 +304,7 @@ class Spreadsheet(object):
             for index, c in enumerate(cell.range.cells): # for each cell of the range, translate the formula
                 if index == 0:
                     c.formula = formula
-                    translator = Translator(unicode('=' +    formula), c.address().split('!')[1]) # the Translator needs a reference without sheet
+                    translator = Translator('=' + formula, c.address().split('!')[1]) # the Translator needs a reference without sheet
                 else:
                     translated = translator.translate_formula(c.address().split('!')[1]) # the Translator needs a reference without sheet
                     c.formula = translated[1:] # to get rid of the '='
