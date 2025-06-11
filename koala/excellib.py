@@ -9,6 +9,8 @@ Python equivalents of various excel functions
 from __future__ import absolute_import, division
 
 import itertools
+import statistics
+
 import numpy as np
 import numpy_financial as npf
 import scipy.optimize
@@ -115,7 +117,8 @@ IND_FUN = [
     "FIND",
     "LOGIC_AND",
     "LOGIC_OR",
-    "PV"
+    "PV",
+    "MEDIAN"
 ]
 
 CELL_CHARACTER_LIMIT = 32767
@@ -1281,7 +1284,7 @@ def power(number, power):
 # https://support.office.com/en-ie/article/sqrt-function-654975c2-05c4-4831-9a24-2c65e4040fdf
 def sqrt(number):
     if number < 0:
-        return ExcelError('#NUM!', '%s must be non-negative' % str(index_num))
+        return ExcelError('#NUM!', '%s must be non-negative' % str(number))
     return np.sqrt(number)
 
 
@@ -1331,7 +1334,7 @@ def concatenate(*args):
     cat_string = ''.join(str(a) for a in inted_args)
 
     if len(cat_string) > CELL_CHARACTER_LIMIT:
-        return ExcelError('#VALUE', 'Too long. concatentaed string should be no longer than %s but is %s' % (CELL_CHARACTER_LIMIT, len(cat_String)))
+        return ExcelError('#VALUE', 'Too long. concatentaed string should be no longer than %s but is %s' % (CELL_CHARACTER_LIMIT, len(cat_string)))
 
     # if all the arguments were int number, the result should be int too
     try:
@@ -1399,6 +1402,28 @@ def xfloor(number, significance):
 
 def pv(*args):
     return npf.pv(*args)
+
+
+def median(median_range):
+    if not isinstance(median_range, Range):
+        return ExcelError('#VALUE!', 'Median_range is not a Range')
+
+    def type_convert_float(value):
+        if is_number(value):
+            value = float(value)
+        else:
+            value = None
+
+        return value
+
+    range_values = [x for x in median_range.values if x is not None]
+
+    numbers = [type_convert_float(x) for x in range_values]
+
+    if not numbers:
+        return None
+    return statistics.median(numbers)
+
 
 
 if __name__ == '__main__':
