@@ -166,7 +166,8 @@ def xlog(a):
     if isinstance(a,(list,tuple,np.ndarray)):
         return [log(x) for x in flatten(a)]
     else:
-        #print a
+        if a <= 0:
+            return ExcelError('#NUM!', 'log(%s) is not defined for a <= 0' % str(a))
         return log(a)
 
 
@@ -1270,6 +1271,11 @@ def pmt(*args): # Excel reference: https://support.office.com/en-us/article/PMT-
 
 # https://support.office.com/en-us/article/POWER-function-D3F2908B-56F4-4C3F-895A-07FB519C362A
 def power(number, power):
+    if isinstance(number, ExcelError):
+        return number
+
+    if isinstance(power, ExcelError):
+        return power
 
     if number == power == 0:
         # Really excel?  What were you thinking?
